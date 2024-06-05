@@ -5,12 +5,18 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import com.model.Glycemie;
 import com.model.Patient;
+import com.service.GlycemieService;
 import com.service.Patientservice;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
+import java.util.List;
+
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 
 @Controller
 @RequestMapping("/")
@@ -18,6 +24,8 @@ public class PatientController {
 
     @Autowired
     private Patientservice patientService;
+    @Autowired
+    private GlycemieService glycemieService;
 
     @GetMapping("/")
     public String show() {
@@ -49,7 +57,7 @@ public class PatientController {
         } catch (ParseException e) {
             model.addAttribute("message", "Erreur: Format de date ou d'heure invalide.");
         }
-        return "result";
+        return "redirect:/list";
     }
 
     @GetMapping("/modifierPatient")
@@ -71,4 +79,62 @@ public class PatientController {
         }
         return "result";
     }
+    @GetMapping("/list")
+    public String afficherListeLecturesGlycemie(Model model) {
+        List<Glycemie> glycemies = glycemieService.afficherListeLecturesGlycemie();
+        model.addAttribute("glycemies", glycemies);
+
+        try {
+            ObjectMapper objectMapper = new ObjectMapper();
+            String glycemiesJson = objectMapper.writeValueAsString(glycemies);
+            model.addAttribute("glycemiesJson", glycemiesJson);
+        } catch (JsonProcessingException e) {
+            e.printStackTrace();
+        }
+
+        return "listeLectures";
+    }
+
+
+    @PostMapping("/supprimerLecture")
+    public String supprimerLectureGlycemie(@RequestParam int id, Model model) {
+        glycemieService.supprimerLectureGlycemie(id);
+        model.addAttribute("message", "Lecture de glycémie supprimée avec succès!");
+        return "redirect:/list";
+    }
+    
+    @GetMapping("/updateLecture/{id}")
+    public String showUpdateForm(@PathVariable("id") int id, Model model) {
+        Glycemie glycemie = glycemieService.findById(id);
+        if (glycemie != null) {
+            model.addAttribute("glycemie", glycemie);
+            return "updateLecture";
+        } else {
+            return "redirect:/list";
+        }
+    }
+
+    @PostMapping("/updateLecture")
+    public String updateLectureGlycemie(@RequestParam int id,
+                                        @RequestParam String date,
+                                        @RequestParam String heure,
+                                        @RequestParam float niveauGlycemie, Model model) {
+        try {
+            Date parsedDate = new SimpleDateFormat("yyyy-MM-dd").parse(date);
+            Date parsedTime = new SimpleDateFormat("HH:mm").parse(heure);
+            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
+            java.sql.Time sqlTime = new java.sql.Time(parsedTime.getTime());
+
+            Glycemie glycemie = glycemieService.updateLectureGlycemie(id, sqlDate, sqlTime, niveauGlycemie);
+            if (glycemie != null) {
+                model.addAttribute("message", "Lecture de glycémie mise à jour avec succès!");
+            } else {
+                model.addAttribute("message", "Erreur: Lecture de glycémie non trouvée.");
+            }
+        } catch (ParseException e) {
+            model.addAttribute("message", "Erreur: Format de date ou d'heure invalide.");
+        }
+        return "redirect:/list";
+    }
+    
 }

@@ -20,30 +20,7 @@ public class GlycemieController {
     @Autowired
     private GlycemieService glycemieService;
 
-    @GetMapping("/saisirLecture")
-    public String showSaisirLectureForm() {
-        return "saisirLecture";
-    }
-
-    @PostMapping("/saisirLecture")
-    public String saisirLectureGlycemie(@RequestParam int patientId, 
-                                        @RequestParam String date, 
-                                        @RequestParam String heure, 
-                                        @RequestParam float niveauGlycemie, Model model) {
-        try {
-            java.util.Date parsedDate = new java.text.SimpleDateFormat("yyyy-MM-dd").parse(date);
-            java.util.Date parsedTime = new java.text.SimpleDateFormat("HH:mm").parse(heure);
-            java.sql.Date sqlDate = new java.sql.Date(parsedDate.getTime());
-            java.sql.Time sqlTime = new java.sql.Time(parsedTime.getTime());
-
-            Patientservice patientservice = new Patientservice();
-			patientservice.saisirLectureGlycemie(patientId, sqlDate, sqlTime, niveauGlycemie);
-            model.addAttribute("message", "Lecture de glycémie enregistrée avec succès!");
-        } catch (java.text.ParseException e) {
-            model.addAttribute("message", "Erreur: Format de date ou d'heure invalide.");
-        }
-        return "result";
-    }
+    
 
     @GetMapping("/list")
     public String afficherListeLecturesGlycemie(Model model) {
@@ -56,6 +33,6 @@ public class GlycemieController {
     public String supprimerLectureGlycemie(@RequestParam int id, Model model) {
         glycemieService.supprimerLectureGlycemie(id);
         model.addAttribute("message", "Lecture de glycémie supprimée avec succès!");
-        return "result";
+        return "listeLectures";
     }
 }

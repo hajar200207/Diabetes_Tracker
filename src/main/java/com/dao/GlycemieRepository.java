@@ -1,9 +1,9 @@
 package com.dao;
 
-import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.repository.CrudRepository;
 
 import com.model.Glycemie;
 
-public interface GlycemieRepository  extends JpaRepository<Glycemie, Integer>{
+public interface GlycemieRepository  extends CrudRepository<Glycemie, Integer>{
 
 }

@@ -13,62 +13,84 @@ public class Patient {
 	private int id;
 	@Column(name = "nom")
 	private String nom;
-	@Column(name="age")
+
+	@Column(name = "age")
 	private int age;
-	@Column(name="taille")
+
+	@Column(name = "taille")
 	private int taille;
-	@Column(name="poids")
+
+	@Column(name = "poids")
 	private float poids;
+
+	@OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+	private List<Glycemie> lecturesGlycemie;
+
+	// Getters and Setters
 	public int getId() {
-		return id;
+	    return id;
 	}
+
 	public void setId(int id) {
-		this.id = id;
+	    this.id = id;
 	}
+
 	public String getNom() {
-		return nom;
+	    return nom;
 	}
+
 	public void setNom(String nom) {
-		this.nom = nom;
+	    this.nom = nom;
 	}
+
 	public int getAge() {
-		return age;
+	    return age;
 	}
+
 	public void setAge(int age) {
-		this.age = age;
+	    this.age = age;
 	}
+
 	public int getTaille() {
-		return taille;
+	    return taille;
 	}
+
 	public void setTaille(int taille) {
-		this.taille = taille;
+	    this.taille = taille;
 	}
+
 	public float getPoids() {
-		return poids;
+	    return poids;
 	}
+
 	public void setPoids(float poids) {
-		this.poids = poids;
+	    this.poids = poids;
 	}
-	 @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL)
-	    private List<Glycemie> lecturesGlycemie;
 
-	    // Getters and Setters
+	public List<Glycemie> getLecturesGlycemie() {
+	    return lecturesGlycemie;
+	}
 
-	    public void saisirLectureGlycemie(Date date, Time heure, float niveauGlycemie) {
-	        Glycemie lecture = new Glycemie();
-	        lecture.setDate(date);
-	        lecture.setHeure(heure);
-	        lecture.setNiveauGlycemie(niveauGlycemie);
-	        lecture.setPatient(this);
-	        this.lecturesGlycemie.add(lecture);
-	    }
+	public void setLecturesGlycemie(List<Glycemie> lecturesGlycemie) {
+	    this.lecturesGlycemie = lecturesGlycemie;
+	}
 
-	    public void modifierLesInformationsPersonnelles(String nom, int age, int taille, int poids) {
-	        this.nom = nom;
-	        this.age = age;
-	        this.taille = taille;
-	        this.poids = poids;
-	    }
+	public void saisirLectureGlycemie(Date date, Time heure, float niveauGlycemie) {
+	    Glycemie lecture = new Glycemie();
+	    lecture.setDate(date);
+	    lecture.setHeure(heure);
+	    lecture.setNiveauGlycemie(niveauGlycemie);
+	    lecture.setPatient(this);
+	    this.lecturesGlycemie.add(lecture);
+	}
+
+	public void modifierLesInformationsPersonnelles(String nom, int age, int taille, int poids) {
+	    this.nom = nom;
+	    this.age = age;
+	    this.taille = taille;
+	    this.poids = poids;
+	}
+
 	}
 
 
