@@ -132,4 +132,36 @@ public class PatientController {
         model.addAttribute("lectures", lectures);
         return "afficherLectures";
     }
+    @GetMapping("/ajouterPatient")
+    public String showAddPatientForm() {
+        return "ajouterPatient";
+    }
+
+    @PostMapping("/ajouterPatient")
+    public String addPatient(@RequestParam String nom, 
+                             @RequestParam int age, 
+                             @RequestParam int taille, 
+                             @RequestParam int poids, 
+                             Model model) {
+        Patient patient = new Patient();
+        patient.setNom(nom);
+        patient.setAge(age);
+        patient.setTaille(taille);
+        patient.setPoids(poids);
+        boolean success = patientService.ajouterPatient(patient);
+        if (success) {
+            model.addAttribute("message", "Patient ajouté avec succès!");
+        } else {
+            model.addAttribute("message", "Erreur: Impossible d'ajouter le patient.");
+        }
+        return "redirect:/patients";
+    }
+   
+    @GetMapping("/patients")
+    public String showPatientsList(Model model) {
+        List<Patient> patients = patientService.findAllPatients();
+        model.addAttribute("patients", patients);
+        return "afficherPatients";
+    }
+
 }

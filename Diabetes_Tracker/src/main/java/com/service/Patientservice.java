@@ -1,6 +1,7 @@
 package com.service;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -37,4 +38,22 @@ public class Patientservice {
         }
         return null;
     }
+    public List<Patient> findAllPatients() {
+        return (List<Patient>) patientRepository.findAll();
+    }
+
+    public Patient findPatientById(int id) {
+        Optional<Patient> optionalPatient = patientRepository.findById(id);
+        return optionalPatient.orElse(null);
+    }
+    public boolean ajouterPatient(Patient patient) {
+       
+        try {
+            patientRepository.save(patient);
+            return true;
+        } catch (Exception e) {
+            return false;
+        }
+    }
+    
 }
